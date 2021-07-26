@@ -25,5 +25,9 @@ public class CustomXPath {
         driver.findElementByXPath("//input[ends-with(@id,'text')]").sendKeys("sample");
         //When Class is dynamically changing
         driver.findElementByXPath("//input[contains(@class,'classname_')]").sendKeys("sample");
+        //for links: custom xpath
+        //all links are represented by <a> tag
+        driver.findElementByXPath("//a[contains(text(),'My Account')]").click();
+
     }
 }
