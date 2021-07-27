@@ -1,7 +1,6 @@
 package Selenium;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
-
 import java.util.Iterator;
 import java.util.Set;
 
