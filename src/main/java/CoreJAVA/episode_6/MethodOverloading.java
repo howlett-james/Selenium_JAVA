@@ -7,12 +7,14 @@ public class MethodOverloading {
         obj.sum();
         obj.sum(10);
         obj.sum(20,30);
+        main(21);
+        main(21,8);
     }
     public static void main(int i){
-
+        System.out.println("I value is: " +i);
     }
     public static void main(int i, int j){
-
+        System.out.println("I & J Value is: " +i +" & " +j);
     }
     //can overload main method too
     //can't create a method inside a method
