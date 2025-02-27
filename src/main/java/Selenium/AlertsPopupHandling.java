@@ -1,6 +1,7 @@
 package Selenium;
 
 import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +10,7 @@ public class AlertsPopupHandling {
         System.setProperty("webdriver.gecko.driver","./Driver/geckodriver.exe");
         FirefoxDriver driver = new FirefoxDriver();
         driver.get("https://mail.rediff.com/cgi-bin/login.cgi");
-        driver.findElementByXPath("//input[@value='Sign in']").click();
+        driver.findElement(By.xpath(("//input[@value='Sign in']"))).click();
         Alert alert = driver.switchTo().alert();
         System.out.println(alert.getText());
         String alertmsg = alert.getText();

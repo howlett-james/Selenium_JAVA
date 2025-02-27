@@ -1,5 +1,6 @@
 package Selenium;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -11,30 +12,30 @@ public class SelectorConcept {
         //8 Types of Selectors
         //1.XPath -- 2
         //only relative xpath should be used
-        driver.findElementByXPath("//input[@name='firstname']").sendKeys("James", Keys.TAB);
-        driver.findElementByXPath("//input[@name='lastname']").sendKeys("Howlett",Keys.TAB);
+        driver.findElement(By.xpath("//input[@name='firstname']")).sendKeys("James", Keys.TAB);
+        driver.findElement(By.xpath("//input[@name='lastname']")).sendKeys("Howlett",Keys.TAB);
 
         //2.ID -- 1
-        driver.findElementById("firstname").sendKeys("James");
-        driver.findElementById("lastname").sendKeys("Howlett");
+        driver.findElement(By.id("firstname")).sendKeys("James");
+        driver.findElement(By.id("lastname")).sendKeys("Howlett");
 
         //3. Name -- 3
-        driver.findElementByName("firstname").sendKeys("James");
-        driver.findElementByName("lastname").sendKeys("Howlett");
+        driver.findElement(By.name("firstname")).sendKeys("James");
+        driver.findElement(By.name("lastname")).sendKeys("Howlett");
 
         //4. LinkText : this is only for links
-        driver.findElementByLinkText("User Agreement").click();
+        driver.findElement(By.linkText("User Agreement")).click();
 
         //5. PartialLinkText -- not useful
-        driver.findElementByPartialLinkText("User Privacy").click();
+        driver.findElement(By.partialLinkText("User Privacy")).click();
 
         //6. CSSSelector -- 2
         //if id is there ---- (#id)
         //if class is there ---- (.class)
-        driver.findElementByCssSelector("#Email").sendKeys("jameshowlett@gmail.com");
+        driver.findElement(By.cssSelector("#Email")).sendKeys("jameshowlett@gmail.com");
 
         //7. ClassName -- 4
-        driver.findElementByClassName("").sendKeys("");
+        driver.findElement(By.className("")).sendKeys("");
         
         //
     }

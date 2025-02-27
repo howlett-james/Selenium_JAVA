@@ -8,6 +8,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 public class ExplicitWait {
     public static void main(String[] args) {
         System.setProperty("webdriver.gecko.driver","./Driver/geckodriver.exe");
@@ -19,8 +22,8 @@ public class ExplicitWait {
         clickOn(driver, driver.findElement(By.xpath("//button[text()='Log In']")), 20);
 
     }
-    public static void clickOn(WebDriver driver, WebElement locator, int timeout){
-        new WebDriverWait(driver,timeout).ignoring(StaleElementReferenceException.class).until(ExpectedConditions.elementToBeClickable(locator));
+    public static void clickOn(WebDriver driver, WebElement locator, int timeUnit){
+        new WebDriverWait(driver, Duration.ofSeconds(timeUnit)).ignoring(StaleElementReferenceException.class).until(ExpectedConditions.elementToBeClickable(locator));
         locator.click();
     }
 }

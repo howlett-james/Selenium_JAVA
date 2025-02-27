@@ -1,5 +1,6 @@
 package Selenium;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,10 +12,10 @@ public class HandleWindowPopup {
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
         driver.get("https://www.seleniumeasy.com/");
-        driver.findElementByLinkText("Demo Website!").click();
-        driver.findElementByLinkText("Alerts & Modals").click();
-        driver.findElementByLinkText("Window Popup Modal").click();
-//        driver.findElementByXPath("//a[contains(text(),'  Follow On Twitter ')]").click();
+        driver.findElement(By.linkText("Demo Website!")).click();
+        driver.findElement(By.linkText("Alerts & Modals")).click();
+        driver.findElement(By.linkText("Window Popup Modal")).click();
+//        driver.findElement(By.xpath("//a[contains(text(),'  Follow On Twitter ')]")).click();
         String parent = driver.getWindowHandle();
         /*String parentwindow = it.next();
         System.out.println("Parent Window ID:"+parentwindow);
@@ -29,8 +30,8 @@ public class HandleWindowPopup {
         driver.close();
 
         driver.switchTo().window(parentwindow);
-        System.out.println("Parent Window Title:"+driver.getTitle());*/
-        /*driver.findElementByXPath("//a[text()='Follow Twitter & Facebook']").click();
+        System.out.println("Parent Window Title:"+driver.getTitle());
+        driver.findElement(By.xpath("//a[text()='Follow Twitter & Facebook']")).click();
         Set<String> handler = driver.getWindowHandles();
         Iterator<String> it = handler.iterator();
         while (it.hasNext()){
@@ -42,7 +43,7 @@ public class HandleWindowPopup {
                 driver.close();
             }
         }*/
-        driver.findElementByXPath("//a[text()='Follow Twitter & Facebook']").click();
+        driver.findElement(By.xpath("//a[text()='Follow Twitter & Facebook']")).click();
         Set<String> handler = driver.getWindowHandles();
         for (String ChildWindow : handler) {
             if (!parent.equals(ChildWindow)) {
