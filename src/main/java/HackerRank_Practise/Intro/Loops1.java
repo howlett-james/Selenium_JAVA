@@ -1,4 +1,4 @@
-package HackerRank_Practise;
+package HackerRank_Practise.Intro;
 
 import java.io.BufferedReader;
 import java.io.IOException;

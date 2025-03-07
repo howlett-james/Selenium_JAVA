@@ -1,4 +1,4 @@
-package HackerRank_Practise;
+package HackerRank_Practise.Intro;
 
 public class FirstCode {
     public static void main(String[] args) {
