@@ -18,7 +18,7 @@ public class staticMethod {
         Scanner scanner = new Scanner(System.in);
         B=scanner.nextInt();
         H = scanner.nextInt();
-
+        scanner.close();
         if(B>0 && H>0){
             flag =true;
         }else {
