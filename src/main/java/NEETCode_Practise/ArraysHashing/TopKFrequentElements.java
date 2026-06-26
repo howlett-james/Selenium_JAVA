@@ -62,12 +62,7 @@ public class TopKFrequentElements {
             arr.add(new int[] {entry.getValue(),entry.getKey()});
         }
 
-        arr.sort(new Comparator<int[]>() {
-            @Override
-            public int compare(int[] a,int[] b){
-                return b[0] - a[0];
-            }
-        });
+        arr.sort((int[] a, int[] b) -> b[0] - a[0]);
 
         char[] res = new char[k];
 
