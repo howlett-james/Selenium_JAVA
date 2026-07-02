@@ -2,7 +2,6 @@ package Selenium;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import java.util.Iterator;
 import java.util.Set;
 
 public class HandleWindowPopup {

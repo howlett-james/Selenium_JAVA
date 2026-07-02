@@ -4,12 +4,14 @@ import java.util.Scanner;
 
 public class palindrome {
     public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
-        String A=sc.next();
-        if(isPalindrome(A)){
-            System.out.println("Yes");
-        }else {
-            System.out.println("No");
+        try (Scanner sc = new Scanner(System.in)) {
+            String A=sc.next();
+            if(isPalindrome(A)){
+                System.out.println("Yes");
+            }else {
+                System.out.println("No");
+            }
+            sc.close();
         }
     }
     public static boolean isPalindrome(String str) {

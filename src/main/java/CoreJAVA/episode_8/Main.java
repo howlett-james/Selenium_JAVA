@@ -15,7 +15,9 @@ public class Main {
         System.out.println("Original balance: ₹" + account.balance());
 
         try {
+            System.out.println("=== Bad Account===");
             BankAccount bad = new BankAccount("", "ACC999", 100);
+            System.out.println(bad.isOverdrawn());
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }

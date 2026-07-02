@@ -22,10 +22,13 @@ public class lexicographicalOrder {
 
 
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        String s = scan.next();
-        int k = scan.nextInt();
-        scan.close();
+        String s;
+        int k;
+        try (Scanner scan = new Scanner(System.in)) {
+            s = scan.next();
+            k = scan.nextInt();
+            scan.close();
+        }
 
         System.out.println(getSmallestAndLargest(s, k));
     }
