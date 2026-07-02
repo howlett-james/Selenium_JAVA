@@ -1,8 +1,6 @@
 package CollectionsFramework.ArrayListConcept;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ArraylistExcercise {
     public static void main(String[] args) {
