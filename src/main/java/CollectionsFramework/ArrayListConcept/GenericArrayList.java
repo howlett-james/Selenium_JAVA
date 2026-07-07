@@ -1,6 +1,8 @@
 package CollectionsFramework.ArrayListConcept;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class GenericArrayList {
     public static void main(String[] args) {
@@ -30,5 +32,18 @@ public class GenericArrayList {
         System.out.println("Names");
         studentList.stream().forEach(System.out::println);
 
+        //iterator
+        System.out.println("Iterator");
+        Iterator<String> iterator = studentList.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+
+        //list with other collection
+        ArrayList<Integer> numbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        System.out.println(numbers);
+
+        ArrayList<String> strings = new ArrayList<>(Arrays.asList("JAVA","Python","JavaScript","PHP"));
+        System.out.println(strings);
     }
 }
