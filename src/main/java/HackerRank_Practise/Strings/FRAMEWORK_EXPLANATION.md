@@ -35,16 +35,37 @@ Web_LOS_Automation/
 
 ---
 
-## 2. Design Pattern
+## 2. Design Patterns
 
-"We use **Page Object Model (POM)** combined with a **Flow-based execution pattern**.
+"This framework uses multiple design patterns — not just one. Here's each one with where it's used:"
 
-- Each web page has its own class under `pages/` — locators and actions are encapsulated there
-- Tests are organized as flows: `HL_Flow` for Home Loan, `LAP_Flow` for Loan Against Property
-- Each flow runs end-to-end in priority order — one stage feeds data into the next
-- We also use **method chaining (fluent interface)** in page classes so test code reads like a sentence
+---
 
-Example of fluent chaining in a test:"
+### 2.1 Page Object Model (POM)
+
+"Every screen in the application has its own class under `pages/`. Locators are private, actions are public methods. If a locator changes, you fix it in one place — tests don't break."
+
+```java
+public class LoginPage {
+    private final By usernameField = By.cssSelector("input#txtUserName");
+    private final By loginButton   = By.cssSelector("input#btnSubmit");
+
+    public LoginPage enterUsername(String uname) {
+        Waits.waitForVisibility(driver, usernameField).sendKeys(uname);
+        return this;
+    }
+    public DashboardPage clickLogin() {
+        Waits.waitForClickability(driver, loginButton).click();
+        return new DashboardPage();
+    }
+}
+```
+
+---
+
+### 2.2 Fluent Interface / Method Chaining
+
+"Page methods return either `this` or a new page object, so test code reads like a sentence."
 
 ```java
 loginPage.enterUsername(FrameworkConstants.salesUser)
@@ -57,7 +78,189 @@ loginPage.enterUsername(FrameworkConstants.salesUser)
          .submit();
 ```
 
-"Each page method returns either `this` (same page) or a new page object, enabling the chain."
+---
+
+### 2.3 Factory Pattern — `DriverFactory`
+
+"`DriverFactory.initDriver(browser, headless)` decides which WebDriver to create based on the browser name. The caller doesn't know how Chrome/Firefox/Edge is constructed — it just asks the factory."
+
+```java
+WebDriver webDriver = switch (browser.toLowerCase()) {
+    case "chrome"  -> new ChromeDriver(getChromeOptions(headless));
+    case "firefox" -> new FirefoxDriver(getFirefoxOptions(headless));
+    case "edge"    -> new EdgeDriver();
+    default -> throw new IllegalArgumentException("Unsupported browser: " + browser);
+};
+```
+
+---
+
+### 2.4 Singleton-like Pattern (ThreadLocal) — `DriverFactory`
+
+"Only one driver instance exists per thread. `getDriver()` always returns the same instance for that thread — no new driver is created unless `initDriver()` is called again. This makes it safe for parallel execution."
+
+```java
+private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+public static WebDriver getDriver() {
+    return Objects.requireNonNull(driver.get(), "Driver not initialized. Call initDriver() first.");
+}
+```
+
+---
+
+### 2.5 Facade Pattern — `elementServices/` package
+
+"`SelectService`, `PicklistService`, and `UploadService` hide the complexity of Selenium interactions behind simple method calls. Page classes don't deal with `Select`, iframe switching, or JS clicks directly — they just call the service."
+
+```java
+// Without Facade — messy in page class
+new Select(driver.findElement(locator)).selectByValue(value);
+
+// With Facade — clean in page class
+sService.selectByValue(locator, value);
+```
+
+---
+
+### 2.6 Data Object Pattern — `LeadDataStore`
+
+"A static class that acts as an in-memory shared data store between test stages. Holds `leadID`, `assignedUser`, `currentScreenName` etc. and passes them across test methods without return values or constructor injection. Also supports flow-specific storage for multi-flow execution."
+
+```java
+// Stage 1 stores the LeadID
+LeadDataStore.setLeadID(leadID);
+
+// Stage 2 reads it
+String leadID = LeadDataStore.getLeadID();
+
+// Flow-specific (multi-flow)
+LeadDataStore.setLeadID("HL_Flow", leadID);
+String leadID = LeadDataStore.getLeadID("HL_Flow");
+```
+
+---
+
+### 2.7 Template Method Pattern — `BaseTest`
+
+"`BaseTest` defines the skeleton of test setup and teardown in `@BeforeMethod` and `@AfterMethod`. Every test class extends `BaseTest` and inherits this behavior. Individual test classes only define the test body — the setup/teardown structure is fixed in the base class."
+
+```java
+// BaseTest defines the skeleton — fixed structure
+@BeforeMethod public void setUp()          { /* init driver, open URL */ }
+@AfterMethod  public void tearDown()       { /* quit driver */ }
+
+// LeadTest just writes the test body
+public class LeadTest extends BaseTest {
+    @Test public void leadTestForHL() { /* only test logic here */ }
+}
+```
+
+---
+
+### 2.8 Observer Pattern — Listeners
+
+"`TestListeners`, `ExcelReportListener`, and `DependencyRemover` all implement TestNG listener interfaces. TestNG notifies them on events like `onTestStart`, `onTestFailure`, `onFinish` — they react without the test code knowing about them at all."
+
+```java
+// TestNG fires events → listeners react
+public class TestListeners implements ITestListener {
+    public void onTestFailure(ITestResult result) { /* capture screenshot, log */ }
+    public void onFinish(ITestContext context)    { /* flush report */ }
+}
+
+public class ExcelReportListener implements ITestListener {
+    public void onFinish(ITestContext context)    { /* write .xlsx file */ }
+}
+```
+
+---
+
+### 2.9 Strategy Pattern — `SelectService` + `PicklistService`
+
+"Different selection strategies are applied based on context — select by value, by text, by index, or randomly. The page class picks the right strategy without changing its own logic."
+
+```java
+sService.selectByValue(locator, "MALE");   // specific value
+sService.selectByValue(locator);           // random value
+sService.selectByText(locator, "Yes");     // by visible text
+sService.selectByIndex(locator, 1);        // by index
+```
+
+---
+
+### 2.10 Screen Router Pattern — `TechnicalScreen` and `LegalScreen`
+
+"These are not full page objects — they act as entry points that return the correct sub-page based on what the test needs. Instead of directly instantiating `TechnicalTriggerancePage`, the test goes through `TechnicalScreen.asTriggerance()`. This keeps navigation clean and centralised."
+
+```java
+// TechnicalScreen acts as a router
+public class TechnicalScreen {
+    public TechnicalTriggerancePage      asTriggerance()    { return new TechnicalTriggerancePage(); }
+    public TechnicalValuationPage        asValuation()      { return new TechnicalValuationPage(); }
+    public TechnicalValuationApprovalPage asValuationApprov() { return new TechnicalValuationApprovalPage(); }
+}
+
+// Same for LegalScreen
+public class LegalScreen {
+    public LegalTriggerancePage asTriggerance() { return new LegalTriggerancePage(); }
+    public LegalOpinionPage     asOpinion()     { return new LegalOpinionPage(); }
+}
+```
+
+---
+
+### 2.11 Builder-like Pattern — `LeadPage.completeLeadEntry()`
+
+"`completeLeadEntry()` orchestrates multiple sub-steps in a fixed sequence — filling customer details, loan eligibility, and property details — building up the complete form state step by step before the final `submit()`."
+
+```java
+public LeadPage completeLeadEntry(String entityType, String cusType, int n) {
+    fillCustomerDetails(entityType, cusType);  // step 1
+    fillLoanEligibility();                     // step 2
+    addProperty(n);                            // step 3
+    return this;                               // ready for submit()
+}
+```
+
+---
+
+### 2.12 Custom Exception Pattern — `exceptions/` package
+
+"`ElementNotFoundException` and `PageLoadException` extend `RuntimeException` to give meaningful, domain-specific error messages instead of generic Selenium exceptions — makes debugging faster and error messages clearer."
+
+```java
+public class ElementNotFoundException extends RuntimeException {
+    public ElementNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+public class PageLoadException extends RuntimeException {
+    public PageLoadException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+```
+
+---
+
+### Quick Pattern Summary
+
+| Pattern | Where Used |
+|---|---|
+| Page Object Model | `pages/` package — all page classes |
+| Fluent Interface | All page methods — method chaining |
+| Factory | `DriverFactory.initDriver()` — browser creation |
+| Singleton (ThreadLocal) | `DriverFactory.getDriver()` — one driver per thread |
+| Facade | `SelectService`, `PicklistService`, `UploadService` |
+| Data Object | `LeadDataStore` — shared state between stages |
+| Template Method | `BaseTest` — setup/teardown skeleton |
+| Observer | `TestListeners`, `ExcelReportListener`, `DependencyRemover` |
+| Strategy | `SelectService` — multiple selection strategies |
+| Screen Router | `TechnicalScreen`, `LegalScreen` — sub-page routing |
+| Builder-like | `LeadPage.completeLeadEntry()` — step-by-step form filling |
+| Custom Exception | `ElementNotFoundException`, `PageLoadException` |
 
 ---
 
