@@ -45,5 +45,6 @@ M             1000*/
         Scanner scan = new Scanner(System.in);
         String s = scan.next();
         System.out.println(new RomanToInteger().romanToInt(s));
+        scan.close();
     }
 }

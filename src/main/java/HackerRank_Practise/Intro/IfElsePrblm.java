@@ -12,9 +12,9 @@ Given an integer, n, perform the following conditional actions:
 Complete the stub code provided in your editor to print whether or not n is weird.*/
 
 public class IfElsePrblm {
-    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         int N = scanner.nextInt();
         scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
         if(N%2!=0){
